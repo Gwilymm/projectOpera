@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pirate Journal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Add Journal Entry</h1>
+      <form id="journalForm">
+        <input type="date" id="date" required />
+        <input type="text" id="title" placeholder="Title" required />
+        <textarea id="story" placeholder="Story" required></textarea>
+        <button type="submit">Submit</button>
+      </form>
+
+      <script>
+        // Fonction pour afficher les entrées du journal
+        function fetchEntries() {
+          fetch("/carnet")
+            .then((response) => response.json())
+            .then((entries) => {
+              const entriesContainer =
+                document.getElementById("journalEntries");
+              entriesContainer.innerHTML = ""; // Clear existing entries
+              entries.forEach((entry) => {
+                const entryDiv = document.createElement("div");
+                entryDiv.innerHTML = `<h3>${entry.title} (${entry.date})</h3><p>${entry.story}</p>`;
+                entriesContainer.appendChild(entryDiv);
+              });
+            })
+            .catch((error) => console.error("Error fetching entries:", error));
+        }
+
+        // Soumettre une nouvelle entrée
+        document
+          .getElementById("journalForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const data = {
+              date: document.getElementById("date").value,
+              title: document.getElementById("title").value,
+              story: document.getElementById("story").value,
+            };
+
+            fetch("/carnet", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log("Success:", data);
+                fetchEntries(); // Rafraîchir les entrées après l'ajout
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          });
+
+        // Charger et afficher les entrées au chargement de la page
+        window.onload = fetchEntries;
+      </script>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+meta {
+  name: treasur
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/carnet.php
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "date": "2024-02-23",
+      "title": "My First Journal Entry",
+      "story": "Today, I learned how to use Docker with PHP and SQLite."
+  }
+  
+}
+
+body:xml {
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                    xmlns:tns="http://localhost:8080/tresorService">
+      <soapenv:Header/>
+      <soapenv:Body>
+          <tns:trouverTresorRequest>
+              <tns:nomPirate>Barbe Noire</tns:nomPirate>
+          </tns:trouverTresorRequest>
+      </soapenv:Body>
+  </soapenv:Envelope>
+  
+}

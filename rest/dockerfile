@@ -1,0 +1,14 @@
+# Utiliser l'image officielle PHP 8.3 avec Apache
+FROM php:8.3-apache
+
+# Activer le mod_rewrite pour Apache
+RUN a2enmod rewrite
+
+# Mise à jour des paquets et installation des dépendances nécessaires
+RUN apt-get update && apt-get install -y \
+	libsqlite3-dev \
+	&& docker-php-ext-install pdo pdo_sqlite
+
+# Copier les fichiers de l'application dans le conteneur
+COPY . /var/www/html/
+
