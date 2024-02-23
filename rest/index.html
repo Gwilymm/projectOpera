@@ -20,19 +20,28 @@
         <button type="submit">Submit</button>
       </form>
 
+      <section id="journalEntries" class="grid"></section>
+
       <script>
-        // Fonction pour afficher les entrées du journal
+        // Fonction pour afficher les entrées du journal sous forme de cartes
         function fetchEntries() {
-          fetch("/carnet")
+          fetch("/carnet.php")
             .then((response) => response.json())
             .then((entries) => {
               const entriesContainer =
                 document.getElementById("journalEntries");
-              entriesContainer.innerHTML = ""; // Clear existing entries
+              entriesContainer.innerHTML = ""; // Effacer les entrées existantes
               entries.forEach((entry) => {
-                const entryDiv = document.createElement("div");
-                entryDiv.innerHTML = `<h3>${entry.title} (${entry.date})</h3><p>${entry.story}</p>`;
-                entriesContainer.appendChild(entryDiv);
+                const entryCard = document.createElement("article");
+                entryCard.classList.add("card");
+                entryCard.innerHTML = `
+                                <header>
+                                    <h3>${entry.title}</h3>
+                                    <time>${entry.date}</time>
+                                </header>
+                                <p>${entry.story}</p>
+                            `;
+                entriesContainer.appendChild(entryCard);
               });
             })
             .catch((error) => console.error("Error fetching entries:", error));
@@ -49,7 +58,7 @@
               story: document.getElementById("story").value,
             };
 
-            fetch("/carnet", {
+            fetch("/carnet.php", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -59,7 +68,7 @@
               .then((response) => response.json())
               .then((data) => {
                 console.log("Success:", data);
-                fetchEntries(); // Rafraîchir les entrées après l'ajout
+                fetchEntries(); // Rafraîchir les cartes après l'ajout
               })
               .catch((error) => {
                 console.error("Error:", error);
